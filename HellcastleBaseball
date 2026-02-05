@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hellcastle Baseball Tournament</title>
+  <style>
+    :root {
+      --bg: #050308;
+      --panel: #151018;
+      --accent: #ff4b1f;
+      --accent2: #f7b733;
+      --text: #f5f5f5;
+      --muted: #888;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #2b0b19 0, #050308 55%, #000 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+    .app {
+      width: 100%;
+      max-width: 1150px;
+      background: linear-gradient(145deg, #120b16, #050308);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 75, 31, 0.4);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 75, 31, 0.25);
+      padding: 20px 24px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(255, 75, 31, 0.12), transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(247, 183, 51, 0.12), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: -1;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      text-shadow: 0 0 12px rgba(247, 183, 51, 0.7);
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 75, 31, 0.6);
+      background: radial-gradient(circle at top, rgba(255, 75, 31, 0.35), rgba(0, 0, 0, 0.9));
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent2);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(255, 75, 31, 0.9);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .panel {
+      background: radial-gradient(circle at top left, rgba(255, 75, 31, 0.12), rgba(0, 0, 0, 0.9));
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 14px 14px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 40%, transparent 60%, rgba(255, 255, 255, 0.03));
+      mix-blend-mode: soft-light;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .panel-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+    .panel-title span {
+      color: var(--accent2);
+    }
+    .panel-body {
+      position: relative;
+      z-index: 1;
+    }
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .status-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-label {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      font-size: 0.7rem;
+    }
+    .status-value {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+    .status-value-strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .bases-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .base-dots {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .base-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(0, 0, 0, 0.7);
+    }
+    .base-dot.active {
+      background: var(--accent2);
+      box-shadow: 0 0 8px rgba(247, 183, 51, 0.9);
+    }
+    .players-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .player-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) 0.9fr 0.9fr;
+      gap: 6px;
+      align-items: center;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid transparent;
+      transition: border 0.15s, background 0.15s, transform 0.1s;
+      font-size: 0.85rem;
+    }
+    .player-row.active {
+      border-color: rgba(255, 75, 31, 0.9);
+      background: radial-gradient(circle at left, rgba(255, 75, 31, 0.35), rgba(0, 0, 0, 0.9));
+      transform: translateX(1px);
+      box-shadow: 0 0 12px rgba(255, 75, 31, 0.4);
+    }
+    .player-name {
+      font-weight: 600;
+    }
+    .player-name span {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+    .player-total {
+      text-align: right;
+      color: var(--accent2);
+      font-weight: 600;
+    }
+    .player-hr {
+      text-align: right;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+    .add-player-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 7px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.7);
+      color: var(--text);
+      font-size: 0.85rem;
+      outline: none;
+    }
+    input[type="text"]::placeholder {
+      color: var(--muted);
+    }
+    button {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at top, rgba(255, 75, 31, 0.9), rgba(255, 75, 31, 0.6));
+      color: #fff;
+      padding: 7px 12px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+      white-space: nowrap;
+    }
+    button.secondary {
+      background: rgba(0, 0, 0, 0.7);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: var(--muted);
+    }
+    button:disabled {
+      opacity: 0.4;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+    button:not(:disabled):hover {
+      box-shadow: 0 0 12px rgba(255, 75, 31, 0.7);
+      transform: translateY(-1px);
+    }
+    button:not(:disabled):active {
+      transform: translateY(0);
+      box-shadow: 0 0 4px rgba(255, 75, 31, 0.6);
+    }
+    .score-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .score-buttons-grid button {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .score-label {
+      font-size: 0.8rem;
+    }
+    .score-points {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      font-weight: 600;
+    }
+    .score-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .score-meta-row strong {
+      color: var(--accent2);
+    }
+    .bag-counter {
+      font-size: 0.85rem;
+      color: var(--accent2);
+      font-weight: 600;
+    }
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .controls-row button {
+      flex: 1;
+      min-width: 120px;
+    }
+    .scorecard-table-wrapper {
+      max-height: 260px;
+      overflow: auto;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.7);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    thead {
+      position: sticky;
+      top: 0;
+      background: rgba(10, 8, 12, 0.96);
+      backdrop-filter: blur(6px);
+      z-index: 1;
+    }
+    th,
+    td {
+      padding: 6px 8px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      white-space: nowrap;
+    }
+    th {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    tbody tr.highlight {
+      background: rgba(255, 75, 31, 0.18);
+    }
+    td.player-cell {
+      text-align: left;
+      font-weight: 600;
+    }
+    td.total-cell {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+    td.hr-cell {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .winner-banner {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at left, rgba(247, 183, 51, 0.4), rgba(0, 0, 0, 0.9));
+      border: 1px solid rgba(247, 183, 51, 0.8);
+      font-size: 0.8rem;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      color: #1b1205;
+    }
+    .winner-banner span {
+      font-weight: 700;
+    }
+    .winner-banner.show {
+      display: inline-flex;
+    }
+    .winner-crown {
+      font-size: 1rem;
+    }
+    .next-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease-out;
+      z-index: 20;
+    }
+    .next-overlay.show {
+      opacity: 1;
+    }
+    .next-banner {
+      padding: 18px 26px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, rgba(255, 75, 31, 0.95), rgba(0, 0, 0, 0.95));
+      border: 2px solid rgba(247, 183, 51, 0.9);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 30px rgba(255, 75, 31, 0.9);
+      animation: pulseGlow 0.7s ease-out forwards, floatUp 0.7s ease-out forwards;
+    }
+    .next-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.9);
+    }
+    @keyframes pulseGlow {
+      0% { transform: scale(0.7); opacity: 0; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(12px); }
+      100% { transform: translateY(0); }
+    }
+    .hellcastle-footer {
+      margin-top: 10px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      text-align: right;
+    }
+    .hellcastle-footer span {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="next-overlay" id="nextOverlay">
+      <div class="next-banner">
+        <div class="next-dot"></div>
+        <span id="nextOverlayText">Next Batter</span>
+        <div class="next-dot"></div>
+      </div>
+    </div>
+
+    <header>
+      <div class="title-block">
+        <h1>Hellcastle Baseball</h1>
+        <div class="subtitle">Bag-by-bag diamond scoring in the castle</div>
+      </div>
+      <div class="badge">
+        <div class="badge-dot"></div>
+        <span>Multiplayer Tournament</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT: Players & State -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>Players</span> & Game State</div>
+        </div>
+        <div class="panel-body">
+          <div class="status-row">
+            <div class="status-pill">
+              <div class="status-label">Inning</div>
+              <div class="status-value" id="statusInning">1 / 3</div>
+            </div>
+            <div class="status-pill">
+              <div class="status-label">Current Player</div>
+              <div class="status-value-strong" id="statusPlayer">—</div>
+            </div>
+            <div class="status-pill">
+              <div class="status-label">Outs</div>
+              <div class="status-value" id="statusOuts">0 / 3</div>
+            </div>
+            <div class="status-pill">
+              <div class="status-label">Bags</div>
+              <div class="status-value" id="statusBags">0 / 8</div>
+            </div>
+          </div>
+
+          <div class="bases-display">
+            <span>Bases:</span>
+            <div class="base-dots">
+              <div class="base-dot" id="baseFirst"></div>
+              <div class="base-dot" id="baseSecond"></div>
+              <div class="base-dot" id="baseThird"></div>
+            </div>
+          </div>
+
+          <div class="players-list" id="playersList"></div>
+
+          <div class="add-player-row">
+            <input type="text" id="playerNameInput" placeholder="Add player name…" />
+            <button id="addPlayerBtn">Add</button>
+          </div>
+
+          <div class="footer-row">
+            <div>Each inning: <strong>8 bags</strong>, <strong>3 outs ends inning</strong>. Highest runs win.</div>
+            <button class="secondary" id="resetBtn">Reset Tournament</button>
+          </div>
+
+          <div class="winner-banner" id="winnerBanner">
+            <span class="winner-crown">⚾</span>
+            <span id="winnerText"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Scoring & Scorecard -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>Hellcastle</span> Baseball Scoring & Scorecard</div>
+        </div>
+        <div class="panel-body">
+          <div class="score-meta-row">
+            <div>
+              Inning <strong id="inningLabel">1</strong> of <strong id="inningTotalLabel">3</strong>
+            </div>
+            <div class="bag-counter">
+              Bags: <span id="bagCounter">0</span> / 8 · Outs: <span id="outsCounter">0</span> / 3
+            </div>
+          </div>
+
+          <div class="score-buttons-grid">
+            <button data-type="triple" class="score-btn">
+              <span class="score-label">Top Hole</span>
+              <span class="score-points">Triple</span>
+            </button>
+            <button data-type="double" class="score-btn">
+              <span class="score-label">Middle Hole</span>
+              <span class="score-points">Double</span>
+            </button>
+            <button data-type="homerun" class="score-btn">
+              <span class="score-label">Bottom Hole</span>
+              <span class="score-points">Home Run</span>
+            </button>
+            <button data-type="single" class="score-btn">
+              <span class="score-label">On Board</span>
+              <span class="score-points">Single</span>
+            </button>
+            <button data-type="out" class="score-btn" style="grid-column: span 2; background: radial-gradient(circle at top, #5b0b0b, #2b0505);">
+              <span class="score-label">Off Board</span>
+              <span class="score-points">Out</span>
+            </button>
+          </div>
+
+          <div class="controls-row">
+            <button id="nextPlayerBtn">Next Batter / Next Inning</button>
+          </div>
+
+          <div style="margin: 10px 0 6px; font-size: 0.8rem; color: var(--muted);">
+            All players complete the <strong>same inning</strong> before advancing to the next inning.
+          </div>
+
+          <div class="scorecard-table-wrapper">
+            <table>
+              <thead id="scorecardHead"></thead>
+              <tbody id="scorecardBody"></tbody>
+            </table>
+          </div>
+
+          <div class="hellcastle-footer">
+            Hellcastle <span>Baseball</span> · Local tournament state is saved automatically
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // CONFIG
+    const TOTAL_INNINGS = 3;
+    const BAGS_PER_INNING = 8;
+    const MAX_OUTS = 3;
+    const STORAGE_KEY = "hellcastle_baseball_tournament_v1";
+
+    // STATE
+    let players = []; // { id, name, inningScores: number[3], total, homeRuns }
+    let currentInning = 0; // 0-based
+    let currentPlayerIndex = 0;
+    let currentBags = 0;
+    let currentOuts = 0;
+    let bases = { first: false, second: false, third: false };
+    let tournamentFinished = false;
+
+    // DOM
+    const playersListEl = document.getElementById("playersList");
+    const playerNameInput = document.getElementById("playerNameInput");
+    const addPlayerBtn = document.getElementById("addPlayerBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const statusInningEl = document.getElementById("statusInning");
+    const statusPlayerEl = document.getElementById("statusPlayer");
+    const statusOutsEl = document.getElementById("statusOuts");
+    const statusBagsEl = document.getElementById("statusBags");
+
+    const baseFirstEl = document.getElementById("baseFirst");
+    const baseSecondEl = document.getElementById("baseSecond");
+    const baseThirdEl = document.getElementById("baseThird");
+
+    const inningLabelEl = document.getElementById("inningLabel");
+    const inningTotalLabelEl = document.getElementById("inningTotalLabel");
+    const bagCounterEl = document.getElementById("bagCounter");
+    const outsCounterEl = document.getElementById("outsCounter");
+
+    const scoreButtons = Array.from(document.querySelectorAll(".score-btn"));
+    const nextPlayerBtn = document.getElementById("nextPlayerBtn");
+
+    const scorecardHeadEl = document.getElementById("scorecardHead");
+    const scorecardBodyEl = document.getElementById("scorecardBody");
+
+    const winnerBannerEl = document.getElementById("winnerBanner");
+    const winnerTextEl = document.getElementById("winnerText");
+
+    const nextOverlayEl = document.getElementById("nextOverlay");
+    const nextOverlayTextEl = document.getElementById("nextOverlayText");
+
+    // SOUND
+    function playNextBatterSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(440, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.18);
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.4, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.32);
+      } catch (e) {}
+    }
+
+    function showNextOverlay(text) {
+      nextOverlayTextEl.textContent = text;
+      nextOverlayEl.classList.add("show");
+      playNextBatterSound();
+      setTimeout(() => {
+        nextOverlayEl.classList.remove("show");
+      }, 700);
+    }
+
+    // STORAGE
+    function saveState() {
+      const data = {
+        players,
+        currentInning,
+        currentPlayerIndex,
+        currentBags,
+        currentOuts,
+        bases,
+        tournamentFinished
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {}
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.players)) return;
+        players = data.players;
+        currentInning = data.currentInning || 0;
+        currentPlayerIndex = data.currentPlayerIndex || 0;
+        currentBags = data.currentBags || 0;
+        currentOuts = data.currentOuts || 0;
+        bases = data.bases || { first: false, second: false, third: false };
+        tournamentFinished = !!data.tournamentFinished;
+      } catch (e) {}
+    }
+
+    // HELPERS
+    function createPlayer(name) {
+      return {
+        id: Date.now() + Math.random().toString(16).slice(2),
+        name: name.trim(),
+        inningScores: Array(TOTAL_INNINGS).fill(0),
+        total: 0,
+        homeRuns: 0
+      };
+    }
+
+    function recalcTotals() {
+      players.forEach(p => {
+        p.total = p.inningScores.reduce((a, b) => a + b, 0);
+      });
+    }
+
+    function getSortedPlayers() {
+      return [...players].sort((a, b) => b.total - a.total); // highest runs wins
+    }
+
+    function getPlayerPositionMap() {
+      const sorted = getSortedPlayers();
+      const map = new Map();
+      sorted.forEach((p, idx) => {
+        map.set(p.id, idx + 1);
+      });
+      return map;
+    }
+
+    function formatPosition(pos) {
+      if (pos === 1) return "1st";
+      if (pos === 2) return "2nd";
+      if (pos === 3) return "3rd";
+      return pos + "th";
+    }
+
+    function inningOver() {
+      return currentOuts >= MAX_OUTS || currentBags >= BAGS_PER_INNING;
+    }
+
+    function updateBasesDisplay() {
+      baseFirstEl.classList.toggle("active", bases.first);
+      baseSecondEl.classList.toggle("active", bases.second);
+      baseThirdEl.classList.toggle("active", bases.third);
+    }
+
+    function updateStatus() {
+      statusInningEl.textContent = `${currentInning + 1} / ${TOTAL_INNINGS}`;
+      inningLabelEl.textContent = currentInning + 1;
+      inningTotalLabelEl.textContent = TOTAL_INNINGS;
+
+      statusOutsEl.textContent = `${currentOuts} / ${MAX_OUTS}`;
+      outsCounterEl.textContent = currentOuts;
+      statusBagsEl.textContent = `${currentBags} / ${BAGS_PER_INNING}`;
+      bagCounterEl.textContent = currentBags;
+
+      const currentPlayer = players[currentPlayerIndex];
+      statusPlayerEl.textContent = currentPlayer ? currentPlayer.name : "—";
+
+      const canScore = players.length > 0 && !tournamentFinished && !inningOver();
+      scoreButtons.forEach(btn => {
+        btn.disabled = !canScore;
+      });
+
+      nextPlayerBtn.disabled = players.length === 0 || tournamentFinished || !inningOver();
+
+      if (tournamentFinished) {
+        nextPlayerBtn.textContent = "Tournament Complete";
+      } else if (
+        currentInning === TOTAL_INNINGS - 1 &&
+        currentPlayerIndex === players.length - 1 &&
+        inningOver()
+      ) {
+        nextPlayerBtn.textContent = "Finish Game";
+      } else if (currentPlayerIndex === players.length - 1 && inningOver()) {
+        nextPlayerBtn.textContent = "Next Inning";
+      } else {
+        nextPlayerBtn.textContent = "Next Batter / Next Inning";
+      }
+
+      updateBasesDisplay();
+    }
+
+    function renderPlayersList() {
+      playersListEl.innerHTML = "";
+      const posMap = getPlayerPositionMap();
+      players.forEach((p, idx) => {
+        const row = document.createElement("div");
+        row.className = "player-row" + (idx === currentPlayerIndex && !tournamentFinished ? " active" : "");
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "player-name";
+        nameDiv.textContent = p.name;
+        const tag = document.createElement("span");
+        tag.textContent = idx === currentPlayerIndex ? "Current" : "Player";
+        nameDiv.appendChild(tag);
+
+        const totalDiv = document.createElement("div");
+        totalDiv.className = "player-total";
+        totalDiv.textContent = p.total;
+
+        const hrDiv = document.createElement("div");
+        hrDiv.className = "player-hr";
+        const pos = posMap.get(p.id);
+        hrDiv.textContent = `HR: ${p.homeRuns} · ${pos ? formatPosition(pos) : ""}`;
+
+        row.appendChild(nameDiv);
+        row.appendChild(totalDiv);
+        row.appendChild(hrDiv);
+        playersListEl.appendChild(row);
+      });
+    }
+
+    function renderScorecard() {
+      const headRow = document.createElement("tr");
+      const thPlayer = document.createElement("th");
+      thPlayer.textContent = "Player";
+      headRow.appendChild(thPlayer);
+      for (let i = 0; i < TOTAL_INNINGS; i++) {
+        const th = document.createElement("th");
+        th.textContent = `I${i + 1}`;
+        headRow.appendChild(th);
+      }
+      const thTotal = document.createElement("th");
+      thTotal.textContent = "Runs";
+      headRow.appendChild(thTotal);
+      const thHR = document.createElement("th");
+      thHR.textContent = "HR";
+      headRow.appendChild(thHR);
+
+      scorecardHeadEl.innerHTML = "";
+      scorecardHeadEl.appendChild(headRow);
+
+      scorecardBodyEl.innerHTML = "";
+      if (players.length === 0) return;
+
+      const sorted = getSortedPlayers();
+      const bestTotal = sorted[0].total;
+
+      players.forEach(p => {
+        const tr = document.createElement("tr");
+        if (tournamentFinished && p.total === bestTotal) {
+          tr.classList.add("highlight");
+        }
+
+        const tdName = document.createElement("td");
+        tdName.className = "player-cell";
+        tdName.textContent = p.name;
+        tr.appendChild(tdName);
+
+        for (let i = 0; i < TOTAL_INNINGS; i++) {
+          const td = document.createElement("td");
+          td.textContent = p.inningScores[i] || 0;
+          tr.appendChild(td);
+        }
+
+        const tdTotal = document.createElement("td");
+        tdTotal.className = "total-cell";
+        tdTotal.textContent = p.total;
+        tr.appendChild(tdTotal);
+
+        const tdHR = document.createElement("td");
+        tdHR.className = "hr-cell";
+        tdHR.textContent = p.homeRuns;
+        tr.appendChild(tdHR);
+
+        scorecardBodyEl.appendChild(tr);
+      });
+    }
+
+    function updateWinnerBanner() {
+      if (!tournamentFinished || players.length === 0) {
+        winnerBannerEl.classList.remove("show");
+        winnerTextEl.textContent = "";
+        return;
+      }
+      const sorted = getSortedPlayers();
+      const bestTotal = sorted[0].total;
+      const winners = sorted.filter(p => p.total === bestTotal).map(p => p.name);
+      const names = winners.join(", ");
+      winnerTextEl.textContent = `Hellcastle Baseball Champion: ${names} (${bestTotal} runs)`;
+      winnerBannerEl.classList.add("show");
+    }
+
+    function renderAll() {
+      recalcTotals();
+      updateStatus();
+      renderPlayersList();
+      renderScorecard();
+      updateWinnerBanner();
+      saveState();
+    }
+
+    // BASEBALL LOGIC
+    function addRuns(player, runs) {
+      player.inningScores[currentInning] += runs;
+    }
+
+    function handleSingle(player) {
+      let runs = 0;
+      if (bases.third) { runs++; bases.third = false; }
+      if (bases.second) { bases.third = true; bases.second = false; }
+      if (bases.first) { bases.second = true; }
+      bases.first = true;
+      addRuns(player, runs);
+    }
+
+    function handleDouble(player) {
+      let runs = 0;
+      if (bases.third) { runs++; bases.third = false; }
+      if (bases.second) { runs++; bases.second = false; }
+      if (bases.first) { bases.third = true; bases.first = false; }
+      bases.second = true;
+      addRuns(player, runs);
+    }
+
+    function handleTriple(player) {
+      let runs = 0;
+      if (bases.first) { runs++; bases.first = false; }
+      if (bases.second) { runs++; bases.second = false; }
+      if (bases.third) { runs++; bases.third = false; }
+      bases.third = true;
+      addRuns(player, runs);
+    }
+
+    function handleHomeRun(player) {
+      let runs = 1; // batter
+      if (bases.first) runs++;
+      if (bases.second) runs++;
+      if (bases.third) runs++;
+      bases.first = bases.second = bases.third = false;
+      addRuns(player, runs);
+      player.homeRuns += 1;
+    }
+
+    function addPlay(type) {
+      if (tournamentFinished || players.length === 0 || inningOver()) return;
+
+      const player = players[currentPlayerIndex];
+
+      currentBags++;
+
+      if (type === "out") {
+        currentOuts++;
+      } else if (type === "single") {
+        handleSingle(player);
+      } else if (type === "double") {
+        handleDouble(player);
+      } else if (type === "triple") {
+        handleTriple(player);
+      } else if (type === "homerun") {
+        handleHomeRun(player);
+      }
+
+      if (inningOver()) {
+        // lock inning for this player
+      }
+
+      renderAll();
+    }
+
+    function resetInningState() {
+      currentBags = 0;
+      currentOuts = 0;
+      bases = { first: false, second: false, third: false };
+    }
+
+    function advancePlayerOrInning() {
+      if (tournamentFinished || players.length === 0 || !inningOver()) return;
+
+      if (currentPlayerIndex < players.length - 1) {
+        currentPlayerIndex++;
+        resetInningState();
+        showNextOverlay("Next Batter");
+      } else {
+        // all players finished this inning
+        if (currentInning < TOTAL_INNINGS - 1) {
+          currentInning++;
+          currentPlayerIndex = 0;
+          resetInningState();
+          showNextOverlay("Next Inning");
+        } else {
+          // game finished
+          tournamentFinished = true;
+        }
+      }
+
+      renderAll();
+    }
+
+    function resetTournament() {
+      if (!confirm("Reset Hellcastle Baseball tournament and clear all scores?")) return;
+      players = [];
+      currentInning = 0;
+      currentPlayerIndex = 0;
+      currentBags = 0;
+      currentOuts = 0;
+      bases = { first: false, second: false, third: false };
+      tournamentFinished = false;
+      localStorage.removeItem(STORAGE_KEY);
+      renderAll();
+    }
+
+    function addPlayerFromInput() {
+      const name = playerNameInput.value.trim();
+      if (!name) return;
+      players.push(createPlayer(name));
+      playerNameInput.value = "";
+      if (players.length === 1) {
+        currentPlayerIndex = 0;
+      }
+      renderAll();
+    }
+
+    // EVENTS
+    addPlayerBtn.addEventListener("click", addPlayerFromInput);
+    playerNameInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") addPlayerFromInput();
+    });
+
+    scoreButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const type = btn.getAttribute("data-type");
+        addPlay(type);
+      });
+    });
+
+    nextPlayerBtn.addEventListener("click", advancePlayerOrInning);
+    resetBtn.addEventListener("click", resetTournament);
+
+    // INIT
+    loadState();
+    renderAll();
+  </script>
+</body>
+</html>
