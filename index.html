@@ -481,6 +481,95 @@
     .hellcastle-footer span {
       color: var(--accent);
     }
+    /* MOBILE OPTIMIZATION */
+@media (max-width: 600px) {
+
+  body {
+    padding: 10px;
+    align-items: stretch;
+  }
+
+  .app {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+  }
+
+  /* Stack panels vertically with better spacing */
+  .layout {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .panel {
+    padding: 12px;
+  }
+
+  /* Players list spacing */
+  .player-row {
+    grid-template-columns: 1.2fr 0.7fr 0.7fr;
+    font-size: 0.75rem;
+    padding: 5px 6px;
+  }
+
+  /* Score buttons: bigger tap targets */
+  .score-buttons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .score-buttons-grid button {
+    font-size: 0.75rem;
+    padding: 10px;
+  }
+
+  /* Next button full width */
+  .controls-row button {
+    min-width: unset;
+    width: 100%;
+  }
+
+  /* Scorecard table: allow horizontal scroll */
+  .scorecard-table-wrapper {
+    overflow-x: auto;
+  }
+
+  table {
+    font-size: 0.7rem;
+    min-width: 420px;
+  }
+
+  /* Winner banner */
+  .winner-banner {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+  }
+
+  /* Overlay text size */
+  .next-banner {
+    font-size: 0.75rem;
+    padding: 14px 20px;
+  }
+}
   </style>
 </head>
 <body>
